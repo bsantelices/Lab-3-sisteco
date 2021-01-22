@@ -9,8 +9,6 @@ def graficar(titulo, x, y, titEjeX, titEjeY, leyenda):
 	plt.legend( leyenda, loc = 'upper left')
 	plt.grid(True)
 	plt.show()
-	nombre = titulo +'.png'
-	plt.savefig( nombre, dpi = 300)
 
 def crearTablero(llave):
 	tablero = []
@@ -35,11 +33,6 @@ def crearTablero(llave):
 		tablero.append(llaveLimpia[:5])
 		llaveLimpia = llaveLimpia[5:]
 	return tablero
-
-def printMatrix(matrix):
-	for row in matrix:
-		print(*row, sep = " ")
-
 
 def buscarLetra(letra,tablero):
 	f = 0 #para las filas
@@ -266,7 +259,6 @@ def testAvalancha(texto1, texto2, llave):
 
 #Menu 
 def menu():
-
 	tamañoBloque = 0.003
 	bandera = True
 	while bandera:
@@ -327,5 +319,5 @@ def menu():
 			bandera = False
 
 menu()
-#Descomentar para realizar test avalancha
+
 #testAvalancha("playstation","pleystation", "secret")
