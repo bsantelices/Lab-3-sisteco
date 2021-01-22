@@ -1,5 +1,16 @@
-import time
+from time import time
 import matplotlib.pyplot as plt
+
+def graficar(titulo, x, y, titEjeX, titEjeY, leyenda):
+	plt.plot(x, y, color='cyan', linewidth = 2, marker='*', markerfacecolor='red', markersize=20)
+	plt.title(titulo)
+	plt.xlabel(titEjeX)
+	plt.ylabel(titEjeY)
+	plt.legend( leyenda, loc = 'upper left')
+	plt.grid(True)
+	plt.show()
+	nombre = titulo +'.png'
+	plt.savefig( nombre, dpi = 300)
 
 def crearTablero(llave):
 	tablero = []
@@ -232,9 +243,31 @@ def desencriptar(texto, tablero):
 			textoOriginal = textoOriginal + tablero[fila2][columna2]
 	return textoOriginal
 
-#Menu 
 
+def testAvalancha(texto1, texto2, llave):
+	mensaje1 = texto1
+	a = ' '.join(format(x, 'b') for x in bytearray(mensaje1, 'utf-8'))
+	mensaje2 = texto2
+	b = ' '.join(format(x, 'b') for x in bytearray(mensaje2, 'utf-8'))
+	#Se encripta la primera palabra
+	# Se crea el tablero para ambos encriptados
+	tablero = crearTablero(llave) 
+	# Se encripta la segunda palabra
+	mensaje1Encriptado = encriptar(mensaje1,tablero)
+	#Se genera la salida en bits
+	bits1 = ' '.join(format(x, 'b') for x in bytearray(mensaje1, 'utf-8'))
+	print("Ambas palabras fueron encriptadas con la misma llave: " + llave)
+	print("La encriptacion de la palabra: "+mensaje1+" resultado en: "+mensaje1Encriptado+", con la siguiente representacion en bits: "+bits1)
+	#Se encripta la segunda palabra
+	mensaje2Encriptado = encriptar(mensaje2,tablero)
+	#Se genera la salida en bits
+	bits2 = ' '.join(format(x, 'b') for x in bytearray(mensaje2, 'utf-8'))
+	print("La encriptacion de la palabra: "+mensaje2+" resultado en: "+mensaje2Encriptado+", con la siguiente representacion en bits: "+bits2)
+
+#Menu 
 def menu():
+
+	tamañoBloque = 0.003
 	bandera = True
 	while bandera:
 		print("Bienvenido al cifrador Playfair")
@@ -248,33 +281,51 @@ def menu():
 		opcion = input("Ingrese su opción: ")
 		
 		tablero = crearTablero(llave)
+		#Encriptado
 		if int(opcion) == 1:
 			texto = input("Ingrese el texto que desea encriptar: ")
-			inicio = time.time()
+			inicio = time()
 			textoEncriptado = encriptar(texto,tablero)
-			final = time.time()
-			tiempoEncriptado = final - inicio
 			print("Para el texto " + texto)
 			print("Y la llave " + llave)
 			print("Este es el texto encriptado:" + textoEncriptado)
+			final = time()
+			tiempoEncriptado = final - inicio
 			print("Con tiempo de encriptado de: " + str(tiempoEncriptado) + " segundos")
+			throughput1 = tamañoBloque / tiempoEncriptado
+			throughput2 = (tamañoBloque*1.5) / tiempoEncriptado
+			throughput3 = (tamañoBloque*2) / tiempoEncriptado
+			#Grafico
+			x = [tamañoBloque, tamañoBloque*1.5, tamañoBloque*2] 
+			y = [throughput1, throughput2, throughput3]
+			nombres = ["Encriptado"]
+			graficar("Throughputs vs tamaño del bloque(Encriptado)", x, y, "Tamaño del bloque", "Throughput", nombres)
 			bandera = False
-
+		#Desencriptado
 		if int(opcion) == 2:
 			texto = input("Ingrese el texto que desea desencriptar: ")
-			inicio = time.time()
+			inicio = time()
 			textoOriginal = desencriptar(texto,tablero)
-			final = time.time()
-			tiempoDesencriptado = final - inicio
 			print("Para el texto " + texto)
 			print("Y la llave " + llave)
 			print("Este es el texto desencriptado:" + textoOriginal)
+			final = time()
+			tiempoDesencriptado = final - inicio
 			print("Con tiempo de desencriptado de: " + str(tiempoDesencriptado) + " segundos")
+			throughput1 = tamañoBloque / tiempoDesencriptado
+			throughput2 = (tamañoBloque*1.5) / tiempoDesencriptado
+			throughput3 = (tamañoBloque*2) / tiempoDesencriptado
+			#Grafico
+			x = [tamañoBloque, tamañoBloque*1.5, tamañoBloque*2] 
+			y = [throughput1, throughput2, throughput3]
+			nombres = ["Desencriptado"]
+			graficar("Throughputs vs tamaño del bloque(Desencriptado)", x, y, "Tamaño del bloque", "Throughput", nombres)
 			bandera = False
-			
-
+		#Salir
 		if int(opcion) == 0:
 			print("Ejecución finalizada")
 			bandera = False
 
 menu()
+#Descomentar para realizar test avalancha
+#testAvalancha("playstation","pleystation", "secret")
